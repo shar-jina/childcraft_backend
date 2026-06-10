@@ -3,6 +3,7 @@ const Banner = require("../models/Banner");
 const Offer = require("../models/Offer");
 const Book = require("../models/Book");
 const Position = require("../models/Position");
+const BookOutline = require("../models/BookOutline");
 
 const seedDatabase = async () => {
   try {
@@ -276,6 +277,55 @@ const seedDatabase = async () => {
       ];
       await Position.insertMany(defaultPositions);
       console.log("[SEED] Default career positions seeded successfully!");
+    }
+
+    // 6. Seed Default Book Series Outlines if none exist
+    const outlineCount = await BookOutline.countDocuments();
+    if (outlineCount === 0) {
+      const defaultOutlines = [
+        {
+          name: "Wings",
+          label: "Core Series",
+          classes: "LKG to Grade 5",
+          gradient: "from-amber-500 via-orange-500 to-red-500",
+          image: "",
+          index: 0
+        },
+        {
+          name: "Pearls & Petals",
+          label: "Kindergarten",
+          classes: "KG",
+          gradient: "from-pink-500 to-rose-600",
+          image: "",
+          index: 1
+        },
+        {
+          name: "Nexus",
+          label: "Integrated",
+          classes: "LKG to Grade 5",
+          gradient: "from-sky-500 via-indigo-500 to-blue-600",
+          image: "",
+          index: 2
+        },
+        {
+          name: "Manjadi",
+          label: "Malayalam",
+          classes: "KG to Grade 8",
+          gradient: "from-emerald-500 to-teal-600",
+          image: "",
+          index: 3
+        },
+        {
+          name: "Explore the World",
+          label: "GK & Science",
+          classes: "Grade 1 to 8",
+          gradient: "from-violet-500 to-purple-600",
+          image: "",
+          index: 4
+        }
+      ];
+      await BookOutline.insertMany(defaultOutlines);
+      console.log("[SEED] Default book outlines seeded successfully!");
     }
   } catch (error) {
     console.error("[SEED] Error seeding database:", error);

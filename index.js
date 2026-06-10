@@ -11,6 +11,7 @@ const offerRoutes = require("./routes/offerRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const bookRoutes = require("./routes/bookRoutes");
 const positionRoutes = require("./routes/positionRoutes");
+const bookOutlineRoutes = require("./routes/bookOutlineRoutes");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/offer", offerRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/positions", positionRoutes);
+app.use("/api/book-outlines", bookOutlineRoutes);
 
 app.get("/", (req, res) => {
   res.send("Childcraft Backend Running");
