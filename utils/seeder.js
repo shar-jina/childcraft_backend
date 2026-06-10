@@ -64,177 +64,117 @@ const seedDatabase = async () => {
       console.log("[SEED] Default active offer banner seeded successfully!");
     }
 
-    // 4. Seed Default Books if none exist
+    // 4. Seed Default Books matching the 34 series if none exist
+    const hasLegacyBooks = await Book.exists({ category: { $in: ["CBSE", "ICSE", "State Syllabus", "General"] } });
+    if (hasLegacyBooks) {
+      console.log("[SEED] Legacy curriculum-based books detected. Clearing Book collection for series-based catalog...");
+      await Book.deleteMany({});
+    }
+
     const bookCount = await Book.countDocuments();
     if (bookCount === 0) {
-      const defaultBooks = [
-        // Std 1
+      const TEXTBOOK_CATEGORIES = [
         {
-          title: "English Reader",
-          image: "/images/bookscover/std1term1.jpeg",
-          category: "CBSE",
-          std: "Std 1",
-          description: "An engaging course designed around interactive stories, grammar basics, and vocabulary builders for first-grade CBSE students.",
-          index: 0
+          name: "Core Series",
+          series: [
+            "Wings (S&T)",
+            "Pearls & Petals (S&T)",
+            "Nexus (T)",
+            "Nexus Plus (T)",
+            "Next Generation (T)",
+            "Golden Wings (T)",
+            "Green Planet"
+          ]
         },
         {
-          title: "Hindi Praveshika",
-          image: "/images/bookscover/std1hindi.jpeg",
-          category: "ICSE",
-          std: "Std 1",
-          description: "Introduction to Hindi scripts, simple poems, and basic vocabulary designed for ICSE curriculum guidelines.",
-          index: 1
+          name: "Languages",
+          series: [
+            "Manjadi",
+            "Malayala Manjari",
+            "Basha Tarang",
+            "Lipi Sagaram",
+            "Hindi Praveshika",
+            "Sarovar 1-5",
+            "Madhuri Hindi Reader"
+          ]
         },
         {
-          title: "Mathematics",
-          image: "/images/bookscover/std1term1.jpeg",
-          category: "State Syllabus",
-          std: "Std 1",
-          description: "Foundation mathematical concepts, number recognition, addition, and subtraction for State Board standards.",
-          index: 2
+          name: "Grammar & English",
+          series: [
+            "Active Grammar 1-8",
+            "Basic Grammar",
+            "Graded English",
+            "Active English (Reader)"
+          ]
         },
         {
-          title: "Environmental Studies",
-          image: "/images/bookscover/std2sem2.jpeg",
-          category: "State Syllabus",
-          std: "Std 1",
-          description: "Interactive course exploring nature, community, hygiene, and daily habits for State Board first graders.",
-          index: 3
+          name: "Computers & GK",
+          series: [
+            "IT Exploring e-World",
+            "Smart Computer",
+            "World of Computer",
+            "GK - Fun & Facts",
+            "GK – Explore the World"
+          ]
         },
         {
-          title: "General Knowledge",
-          image: "/images/bookscover/std3sem2.jpeg",
-          category: "CBSE",
-          std: "Std 1",
-          description: "Fun quizzes, world facts, and basic science facts to nurture curious minds in CBSE standard 1.",
-          index: 4
-        },
-        // Std 2
-        {
-          title: "Mathematics",
-          image: "/images/bookscover/std2sem2.jpeg",
-          category: "CBSE",
-          std: "Std 2",
-          description: "Conceptual math course with illustrative problem solving, shapes, and division concepts aligned with CBSE guidelines.",
-          index: 5
-        },
-        {
-          title: "Term Book",
-          image: "/images/bookscover/std2term2.jpeg",
-          category: "ICSE",
-          std: "Std 2",
-          description: "Comprehensive term material cover for core sciences, English, and social studies in the ICSE framework.",
-          index: 6
-        },
-        {
-          title: "Environment",
-          image: "/images/bookscover/std2sem2.jpeg",
-          category: "State Syllabus",
-          std: "Std 2",
-          description: "Introduction to Environmental Studies, plants, animals, and local geography under State Board guidelines.",
-          index: 7
-        },
-        {
-          title: "English Grammar",
-          image: "/images/bookscover/std1term1.jpeg",
-          category: "CBSE",
-          std: "Std 2",
-          description: "Key grammar rules, punctuation, sentence building, and worksheets for second-grade CBSE students.",
-          index: 8
-        },
-        {
-          title: "Hindi Pathmala",
-          image: "/images/bookscover/std3hindi.jpeg",
-          category: "ICSE",
-          std: "Std 2",
-          description: "Hindi prose reading comprehension, grammar foundations, and poems tailored for Std 2 ICSE learners.",
-          index: 9
-        },
-        // Std 3
-        {
-          title: "Science Explorer",
-          image: "/images/bookscover/std3sem2.jpeg",
-          category: "CBSE",
-          std: "Std 3",
-          description: "Explores core scientific themes, life cycles, and nature patterns with interactive exercises for CBSE Std 3.",
-          index: 10
-        },
-        {
-          title: "Hindi Pathmala",
-          image: "/images/bookscover/std3hindi.jpeg",
-          category: "ICSE",
-          std: "Std 3",
-          description: "Advanced vocabulary, short stories, and grammatical structures tailored for Std 3 ICSE scholars.",
-          index: 11
-        },
-        {
-          title: "Term Book",
-          image: "/images/bookscover/std3term1.jpeg",
-          category: "State Syllabus",
-          std: "Std 3",
-          description: "Full term coverage containing environmental science, regional language, and mathematics for State Board.",
-          index: 12
-        },
-        {
-          title: "Social Studies",
-          image: "/images/bookscover/std3sem2.jpeg",
-          category: "CBSE",
-          std: "Std 3",
-          description: "Introduction to society, civic responsibilities, transport, and national symbols for CBSE Std 3.",
-          index: 13
-        },
-        {
-          title: "Art & Craft",
-          image: "/images/bookscover/std1hindi.jpeg",
-          category: "State Syllabus",
-          std: "Std 3",
-          description: "Creative coloring, paper craft, drawing techniques, and DIY activities for third-grade State curriculum.",
-          index: 14
-        },
-        // Std 4
-        {
-          title: "General Studies",
-          image: "/images/bookscover/std3sem2.jpeg",
-          category: "CBSE",
-          std: "Std 4",
-          description: "Advanced social sciences, history, and scientific methods for standard 4 CBSE students.",
-          index: 15
-        },
-        {
-          title: "Math Mastery",
-          image: "/images/bookscover/std4term2.jpeg",
-          category: "ICSE",
-          std: "Std 4",
-          description: "High-level arithmetic, fractions, decimals, and basic geometry problems designed for ICSE guidelines.",
-          index: 16
-        },
-        {
-          title: "General Science",
-          image: "/images/bookscover/std4term2.jpeg",
-          category: "State Syllabus",
-          std: "Std 4",
-          description: "State board aligned curriculum covering human systems, physics basics, and plant physiology.",
-          index: 17
-        },
-        {
-          title: "English Grammar",
-          image: "/images/bookscover/std2term2.jpeg",
-          category: "ICSE",
-          std: "Std 4",
-          description: "Advanced grammar syntax, composition writing, essay drafting, and comprehension skills for ICSE Std 4.",
-          index: 18
-        },
-        {
-          title: "Computer Science",
-          image: "/images/bookscover/std1term1.jpeg",
-          category: "State Syllabus",
-          std: "Std 4",
-          description: "Foundational guide to computer software, MS Office basics, typing, and safe internet browsing for State Board.",
-          index: 19
+          name: "Writing & Art",
+          series: [
+            "Fun with Crayon",
+            "Sulekh Mala Handwriting",
+            "Vivanta",
+            "Capital and Small Letters",
+            "Magic of Art",
+            "Cursive Writing",
+            "Draw & Colour",
+            "Art & Activity",
+            "ABC Writing Capital and Small",
+            "Aalekhanamithram - Malayalam Writing"
+          ]
         }
       ];
+
+      const defaultBooks = [];
+      let indexCounter = 0;
+
+      const images = [
+        "/images/bookscover/std1term1.jpeg",
+        "/images/bookscover/std1hindi.jpeg",
+        "/images/bookscover/std2sem2.jpeg",
+        "/images/bookscover/std2term2.jpeg",
+        "/images/bookscover/std3sem2.jpeg",
+        "/images/bookscover/std3hindi.jpeg",
+        "/images/bookscover/std3term1.jpeg",
+        "/images/bookscover/std4term2.jpeg"
+      ];
+
+      TEXTBOOK_CATEGORIES.forEach(group => {
+        group.series.forEach(seriesName => {
+          let count = 5;
+          if (seriesName.includes("1-8") || seriesName.includes("Explore the World") || seriesName.includes("Grammar")) {
+            count = 8;
+          } else if (seriesName.includes("1-5")) {
+            count = 5;
+          } else if (seriesName.includes("Petals") || seriesName.includes("Writing") || seriesName.includes("Praveshika")) {
+            count = 3;
+          }
+
+          for (let i = 1; i <= count; i++) {
+            const image = images[(i - 1) % images.length];
+            defaultBooks.push({
+              title: `${seriesName} - Book ${i}`,
+              image: image,
+              category: seriesName,
+              std: `Grade ${i}`,
+              description: `A comprehensive textbook designed for the ${seriesName} curriculum, focused on conceptual clarity, active learning tools, and standard-aligned exercises.`,
+              index: indexCounter++
+            });
+          }
+        });
+      });
+
       await Book.insertMany(defaultBooks);
-      console.log("[SEED] Default 20 textbooks seeded successfully!");
+      console.log(`[SEED] Dynamically seeded ${defaultBooks.length} default books across 34 series successfully!`);
     }
 
     // 5. Seed Default Career Positions if none exist
