@@ -4,6 +4,7 @@ const Offer = require("../models/Offer");
 const Book = require("../models/Book");
 const Position = require("../models/Position");
 const BookOutline = require("../models/BookOutline");
+const Gallery = require("../models/Gallery");
 
 const seedDatabase = async () => {
   try {
@@ -266,6 +267,26 @@ const seedDatabase = async () => {
       ];
       await BookOutline.insertMany(defaultOutlines);
       console.log("[SEED] Default book outlines seeded successfully!");
+    }
+
+    // 7. Seed Default Gallery Items if they don't exist in database
+    const defaultGallery = [
+      { imageUrl: '/images/gallery/img3.jpeg', title: 'Campus Activity', index: 0 },
+      { imageUrl: '/images/gallery/img2.jpeg', title: 'Student Projects', index: 1 },
+      { imageUrl: '/images/gallery/img1.jpeg', title: 'Library Reference', index: 2 },
+      { imageUrl: '/images/gallery/img4.jpeg', title: 'Classroom Interaction', index: 3 },
+      { imageUrl: '/images/gallery/img5.jpeg', title: 'School Building', index: 4 },
+      { imageUrl: '/images/gallery/img6.jpeg', title: 'Creative Writing Workshop', index: 5 },
+      { imageUrl: '/images/gallery/img7.jpeg', title: 'Interactive Learning', index: 6 },
+      { imageUrl: '/images/gallery/img8.jpeg', title: 'Group Discussion', index: 7 },
+    ];
+
+    for (const item of defaultGallery) {
+      const exists = await Gallery.findOne({ imageUrl: item.imageUrl });
+      if (!exists) {
+        await Gallery.create(item);
+        console.log(`[SEED] Seeded default gallery image: ${item.title}`);
+      }
     }
   } catch (error) {
     console.error("[SEED] Error seeding database:", error);
